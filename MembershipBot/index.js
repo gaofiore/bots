@@ -15,6 +15,7 @@ const connector = new builder.ChatConnector({
     appPassword: process.env.MicrosoftAppPassword
 });
 
+var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
 const recognizer = new cognitiveServices.QnAMakerRecognizer({
@@ -27,12 +28,10 @@ var qnaMakerTools = new cognitiveServices.QnAMakerTools();
 bot.library(qnaMakerTools.createLibrary());
 
 const qnAMakerDialog = new cognitiveServices.QnAMakerDialog({
-    recognizers: [qnaRecognizer],
+    recognizers: [recognizer],
     defaultMessage: "Sorry I don't understand the question",
     qnaThreshold: 0.4,
     feedbackLib: qnaMakerTools
 });
 
-var bot = new builder.UniversalBot(connector);
-
-bot.dialog('/', qnaMakerDialog);
+bot.dialog('/', qnAMakerDialog);
